@@ -24,3 +24,6 @@ while True:
     message = line_1 + line_2 + page_content
     c.send(message)
     c.close()
+
+# @comment This code is great! No criticisms or suggestions...
+
