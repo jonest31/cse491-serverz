@@ -2,6 +2,12 @@
 import random
 import socket
 import time
+import urlparse
+
+#global variables
+header = 'HTTP/1.0 200 OK\r\n' + \
+                    'Content-type: text/html\r\n' + \
+                    '\r\n'
 
 def main():
     s = socket.socket()         # Create a socket object
@@ -25,32 +31,91 @@ def main():
 def handle_connection(conn):
 
     #get the request message
-    request = conn.recv(1000).split('\n')[0]
-    method = request.split(' ')[0]
-    path = request.split(' ')[1]
-    
-    # send a response
-    conn.send('HTTP/1.0 200 OK\r\n')
-    conn.send('Content-type: text/html\r\n\r\n')
-    response_body = ' '
-    if method == 'POST':
-        response_body = '<h1>Post</h1>Blah'
-    elif path == '/':
-	response_body = '<h1>Links to other pages</h1>' + \
-                      '<a href = /content>Content</a><br>' + \
-                      '<a href = /file>File</a><br>' + \
-                      '<a href = /image>Image</a>'
-    elif path == '/content':
-	response_body = '<h1>Are we there yet</h1>Please'
-    elif path == '/file':
-	response_body = '<h1>On the banks of the read cedar</h1>winning'
-    elif path == '/image':
-	response_body = '<h1>There is light at the end of this tunnel</h1>SO CLOSE'
+    request = conn.recv(1000)
+    print request
 
-    #conn.send('<h1>Hello, world.</h1>')
-    #conn.send('This is jonest31\'s Web server.')
-    conn.send(response_body)
-    conn.close()
+    first_line = request.split('\r\n')[0].split(' ')
+
+    # Path is the second element in the first line of the request
+    # separated by whitespace. (Between GET and HTTP/1.1). GET/POST is first.
+    http_method = first_line[0]
+            
+    try:
+        parsed_url = urlparse.urlparse(first_line[1])
+        path = parsed_url[2]
+    except:
+        path = "/404"
+
+        
+    # send a response
+    if http_method == 'POST':
+        if path == '/':
+            handle_index(conn, '')
+        elif path == '/submit':
+            # POST has the submitted params at the end of the content body
+            handle_submit(conn,request.split('\r\n')[-1])
+    else:
+        if path == '/':
+            handle_index(conn,parsed_url)
+        elif path == '/content':
+            handle_content(conn,parsed_url)
+        elif path == '/file':
+            handle_file(conn,parsed_url)
+        elif path == '/image':
+            handle_image(conn,parsed_url)
+        elif path == '/submit':
+            handle_submit(conn,parsed_url)
+        else:
+          notfound(conn,parsed_url)
+        conn.close()
+
+def handle_index(conn, parsed_url):
+  #Handle a connection given path / 
+  conn.send(header + \
+            "<form action='/submit' method='GET'>\n" + \
+            "<p>first name: <input type='text' name='firstname'></p>\n" + \
+            "<p>last name: <input type='text' name='lastname'></p>\n" + \
+            "<input type='submit' value='Submit'>\n\n" + \
+            "</form>")
+      
+def handle_submit(conn, parsed_url):
+    #Handle a connection given path /submit
+    # submit needs to know about the query field, so more
+    # work needs to be done here.
+
+    query = parsed_url[4]
+    
+    # each value is split by an &
+    query = query.split("&")
+
+    # format is name=value. We want the value.
+    firstname = query[0].split("=")[1]
+    lastname = query[1].split("=")[1]
+
+    conn.send(header + \
+              "Hello Ms. %s %s." % (firstname, lastname))
+    
+def handle_content(conn, parsed_url):
+    #Handle a connection given path /content
+    conn.send(header + \
+            '<h1>MSU SMB ftw</h1>' + \
+            'some content')
+
+def handle_file(conn, parsed_url):
+    #Handle a connection given path /file
+    conn.send(header + \
+            '<h1>On the banks of the read cedar</h1>' + \
+            'some file')
+
+def handle_image(conn, parsed_url):
+    #Handle a connection given path /image
+    conn.send(header + \
+            '<h1>Theres a school thats known to all</h1>' + \
+            'some image')
+
+def notfound(conn, parsed_url):
+    conn.send(header + \
+            '<h1>rut roh you did it wrong...</h1>')
 
 if __name__ == '__main__':
    main()
