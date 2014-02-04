@@ -31,10 +31,11 @@ def test_handle_connection():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
-                      '<h1>Links to other pages</h1>' + \
-                      '<a href = /content>Content</a><br>' + \
-                      '<a href = /file>File</a><br>' + \
-                      '<a href = /image>Image</a>'
+                      "<form action='/submit' method='GET'>\n" + \
+                      "<p>first name: <input type='text' name='firstname'></p>\n" + \
+                      "<p>last name: <input type='text' name='lastname'></p>\n" + \
+                      "<input type='submit' value='Submit'>\n\n" + \
+                      "</form>"
 
     server.handle_connection(conn)
 
@@ -46,7 +47,7 @@ def test_handle_content_connection():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
-                      '<h1>Are we there yet</h1>Please'
+                      '<h1>MSU SMB ftw</h1>some content'
 
     server.handle_connection(conn)
 
@@ -58,7 +59,7 @@ def test_handle_file_connection():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
-                      '<h1>On the banks of the read cedar</h1>winning'
+                      '<h1>On the banks of the read cedar</h1>some file'
 
     server.handle_connection(conn)
 
@@ -70,7 +71,7 @@ def test_handle_image_connection():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
-                      '<h1>There is light at the end of this tunnel</h1>SO CLOSE'
+                      '<h1>Theres a school thats known to all</h1>some image'
 
     server.handle_connection(conn)
 
@@ -82,11 +83,33 @@ def test_handle_post_connection():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
-                      '<h1>Post</h1>Blah'
+                      "<form action='/submit' method='GET'>\n" + \
+                      "<p>first name: <input type='text' name='firstname'></p>\n" + \
+                      "<p>last name: <input type='text' name='lastname'></p>\n" + \
+                      "<input type='submit' value='Submit'>\n\n" + \
+                      "</form>"
+
+    server.handle_connection(conn)
+    print expected_return
+    print repr(expected_return)
+    assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
+
+    
+#test submit call
+def test_handle_submit():
+    conn = FakeConnection("GET /submit?firstname=Tay&lastname=Jones " + \
+                          "HTTP/1.1\r\n\r\n")
+
+    expected_return = 'HTTP/1.0 200 OK\r\n' + \
+                      'Content-type: text/html\r\n' + \
+                      '\r\n' + \
+                      "Hello Ms. Tay Jones."
 
     server.handle_connection(conn)
 
     assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
+
+
 
 
 
