@@ -74,13 +74,13 @@ def handle_index(conn, params):
   conn.send('HTTP/1.0 200 OK\r\n' + \
             'Content-type: text/html\r\n' + \
             '\r\n' + \
-            "<p><u>Form Submission via GET</u></p>"
+            "<p><u>Form Submission via GET</u></p>" + \
             "<form action='/submit' method='GET'>\n" + \
             "<p>first name: <input type='text' name='firstname'></p>\n" + \
             "<p>last name: <input type='text' name='lastname'></p>\n" + \
             "<p><input type='submit' value='Submit'>\n\n" + \
             "</form></p>" + \
-            "<p><u>Form Submission via POST</u></p>"
+            "<p><u>Form Submission via POST</u></p>" + \
             "<form action='/submit' method='POST'>\n" + \
             "<p>first name: <input type='text' name='firstname'></p>\n" + \
             "<p>last name: <input type='text' name='lastname'></p>\n" + \
