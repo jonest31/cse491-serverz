@@ -56,64 +56,75 @@ def handle_connection(conn):
             handle_submit(conn,request.split('\r\n')[-1])
     else:
         if path == '/':
-            handle_index(conn,parsed_url)
+            handle_index(conn,'')
         elif path == '/content':
-            handle_content(conn,parsed_url)
+            handle_content(conn,'')
         elif path == '/file':
-            handle_file(conn,parsed_url)
+            handle_file(conn,'')
         elif path == '/image':
-            handle_image(conn,parsed_url)
+            handle_image(conn,'')
         elif path == '/submit':
-            handle_submit(conn,parsed_url)
+            handle_submit(conn,parsed_url[4])  #!!!!!!!!!!
         else:
-          notfound(conn,parsed_url)
+          notfound(conn,'')
         conn.close()
 
-def handle_index(conn, parsed_url):
+def handle_index(conn, params):
   #Handle a connection given path / 
-  conn.send(header + \
+  conn.send('HTTP/1.0 200 OK\r\n' + \
+            'Content-type: text/html\r\n' + \
+            '\r\n' + \
+            "<p><u>Form Submission via GET</u></p>"
             "<form action='/submit' method='GET'>\n" + \
             "<p>first name: <input type='text' name='firstname'></p>\n" + \
             "<p>last name: <input type='text' name='lastname'></p>\n" + \
-            "<input type='submit' value='Submit'>\n\n" + \
-            "</form>")
+            "<p><input type='submit' value='Submit'>\n\n" + \
+            "</form></p>" + \
+            "<p><u>Form Submission via POST</u></p>"
+            "<form action='/submit' method='POST'>\n" + \
+            "<p>first name: <input type='text' name='firstname'></p>\n" + \
+            "<p>last name: <input type='text' name='lastname'></p>\n" + \
+            "<p><input type='submit' value='Submit'>\n\n" + \
+            "</form></p>")
       
-def handle_submit(conn, parsed_url):
+def handle_submit(conn, params):
     #Handle a connection given path /submit
     # submit needs to know about the query field, so more
-    # work needs to be done here.
-
-    query = parsed_url[4]
+    # work needs to be done here
     
-    # each value is split by an &
-    query = query.split("&")
+    params = urlparse.parse_qs(params)
 
     # format is name=value. We want the value.
-    firstname = query[0].split("=")[1]
-    lastname = query[1].split("=")[1]
+    firstname = params['firstname'][0]
+
+    lastname = params['lastname'][0]
+
+    #print firstname
+    #print lastname
+    #print params
 
     conn.send(header + \
               "Hello Ms. %s %s." % (firstname, lastname))
     
-def handle_content(conn, parsed_url):
+def handle_content(conn, params):
     #Handle a connection given path /content
     conn.send(header + \
             '<h1>MSU SMB ftw</h1>' + \
             'some content')
 
-def handle_file(conn, parsed_url):
+def handle_file(conn, params):
     #Handle a connection given path /file
     conn.send(header + \
             '<h1>On the banks of the read cedar</h1>' + \
             'some file')
 
-def handle_image(conn, parsed_url):
+def handle_image(conn, params):
     #Handle a connection given path /image
     conn.send(header + \
             '<h1>Theres a school thats known to all</h1>' + \
             'some image')
 
-def notfound(conn, parsed_url):
+def notfound(conn, params):
     conn.send(header + \
             '<h1>rut roh you did it wrong...</h1>')
 

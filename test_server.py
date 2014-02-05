@@ -31,11 +31,18 @@ def test_handle_connection():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
+                      "<p><u>Form Submission via GET</u></p>" + \
                       "<form action='/submit' method='GET'>\n" + \
                       "<p>first name: <input type='text' name='firstname'></p>\n" + \
                       "<p>last name: <input type='text' name='lastname'></p>\n" + \
-                      "<input type='submit' value='Submit'>\n\n" + \
-                      "</form>"
+                      "<p><input type='submit' value='Submit'>\n\n" + \
+                      "</form></p>" + \
+                      "<p><u>Form Submission via POST</u></p>" +\
+                      "<form action='/submit' method='POST'>\n" + \
+                      "<p>first name: <input type='text' name='firstname'></p>\n" + \
+                      "<p>last name: <input type='text' name='lastname'></p>\n" + \
+                      "<p><input type='submit' value='Submit'>\n\n" + \
+                      "</form></p>"
 
     server.handle_connection(conn)
 
@@ -83,11 +90,18 @@ def test_handle_post_connection():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
+		      "<p><u>Form Submission via GET</u></p>" +\
                       "<form action='/submit' method='GET'>\n" + \
                       "<p>first name: <input type='text' name='firstname'></p>\n" + \
                       "<p>last name: <input type='text' name='lastname'></p>\n" + \
                       "<input type='submit' value='Submit'>\n\n" + \
-                      "</form>"
+                      "</form></p>" + \
+                      "<p><u>Form Submission via POST</u></p>" +\
+                      "<form action='/submit' method='POST'>\n" + \
+                      "<p>first name: <input type='text' name='firstname'></p>\n" + \
+                      "<p>last name: <input type='text' name='lastname'></p>\n" + \
+                      "<p><input type='submit' value='Submit'>\n\n" + \
+                      "</form></p>"
 
     server.handle_connection(conn)
     print expected_return
@@ -109,6 +123,18 @@ def test_handle_submit():
 
     assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
 
+# Test /submit requests
+def test_handle_submit_post():
+    conn = FakeConnection("POST /submit " + \
+                          "HTTP/1.1\r\n\r\nfirstname=Tay&lastname=Jones")
+
+    expected_return = 'HTTP/1.0 200 OK\r\n' + \
+                      'Content-type: text/html\r\n' + \
+                      '\r\n' + \
+                      "Hello Mrs. Tay Jones."
+
+    server.handle_connection(conn)
+    assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
 
 
 
