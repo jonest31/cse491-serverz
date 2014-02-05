@@ -66,13 +66,31 @@ def handle_connection(conn):
         elif path == '/submit':
             handle_submit(conn,parsed_url[4])  #!!!!!!!!!!
         else:
-          notfound(conn,'')
+            notfound(conn,'')
     conn.close()
 
 def handle_index(conn, params):
   #Handle a connection given path / 
   conn.send('HTTP/1.0 200 OK\r\n' + \
             'Content-type: text/html\r\n' + \
+            '\r\n' + \
+            "<p><u>Form Submission via GET</u></p>" + \
+            "<form action='/submit' method='GET'>\n" + \
+            "<p>first name: <input type='text' name='firstname'></p>\n" + \
+            "<p>last name: <input type='text' name='lastname'></p>\n" + \
+            "<p><input type='submit' value='Submit'>\n\n" + \
+            "</form></p>" + \
+            "<p><u>Form Submission via POST</u></p>" + \
+            "<form action='/submit' method='POST'>\n" + \
+            "<p>first name: <input type='text' name='firstname'></p>\n" + \
+            "<p>last name: <input type='text' name='lastname'></p>\n" + \
+            "<p><input type='submit' value='Submit'>\n\n" + \
+            "</form></p>")
+
+def handle_index2(conn, params):
+  #Handle a connection given path / 
+  conn.send('HTTP/1.0 200 OK\r\n' + \
+            'Content-type: application/x-www-form-urlencoded\r\n' + \
             '\r\n' + \
             "<p><u>Form Submission via GET</u></p>" + \
             "<form action='/submit' method='GET'>\n" + \
@@ -124,7 +142,7 @@ def handle_image(conn, params):
             '<h1>Theres a school thats known to all</h1>' + \
             'some image')
 
-def http_404_header(conn, params):
+def notfound(conn, params):
     conn.send(header + \
             "404 Not Found" + \
             '<h1>rut roh you did it wrong...</h1>')
