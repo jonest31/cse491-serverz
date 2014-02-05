@@ -124,7 +124,7 @@ def handle_image(conn, params):
             '<h1>Theres a school thats known to all</h1>' + \
             'some image')
 
-def notfound(conn, params):
+def http_404_header(conn, params):
     conn.send(header + \
             "404 Not Found" + \
             '<h1>rut roh you did it wrong...</h1>')
