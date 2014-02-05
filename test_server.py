@@ -131,7 +131,7 @@ def test_handle_submit_post():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
-                      "Hello Mrs. Tay Jones."
+                      "Hello Ms. Tay Jones."
 
     server.handle_connection(conn)
     assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
