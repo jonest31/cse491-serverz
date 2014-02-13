@@ -2,9 +2,15 @@ import server
 
 class FakeConnection(object):
     """
+<<<<<<< HEAD
 A fake connection class that mimics a real TCP socket for the purpose
 of testing socket I/O.
 """
+=======
+    A fake connection class that mimics a real TCP socket for the purpose
+    of testing socket I/O.
+    """
+>>>>>>> e77f2fc738ef6ccc259923fb42d8deae606df1c3
     def __init__(self, to_recv):
         self.to_recv = to_recv
         self.sent = ""
@@ -25,6 +31,7 @@ of testing socket I/O.
     def close(self):
         self.is_closed = True
 
+<<<<<<< HEAD
 def test_handle_connection_slash():
     conn = FakeConnection("GET / HTTP/1.0\r\n\r\n")
     er = 'HTTP/1.0 200 OK\r\n'
@@ -140,3 +147,18 @@ def test_submit_post_404():
 
 
 
+=======
+# Test a basic GET call.
+
+def test_handle_connection():
+    conn = FakeConnection("GET / HTTP/1.0\r\n\r\n")
+    expected_return = 'HTTP/1.0 200 OK\r\n' + \
+                      'Content-type: text/html\r\n' + \
+                      '\r\n' + \
+                      '<h1>Hello, world.</h1>' + \
+                      'This is ctb\'s Web server.'
+
+    server.handle_connection(conn)
+
+    assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
+>>>>>>> e77f2fc738ef6ccc259923fb42d8deae606df1c3
