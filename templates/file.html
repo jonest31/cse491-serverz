@@ -1,8 +1,11 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-<h1>They don't think it be like it is, but it do.</h1>
-This some file.
-
+	<h1>File Page</h1>
+	This page contains file lists.<br />
+	<ul>
+{% for name in names %}
+	<a href='/text/{{ name }}'>{{ name }}<br>
+{% endfor %}
+	</ul>
+	<a href="/">Home</a>
 {% endblock %}

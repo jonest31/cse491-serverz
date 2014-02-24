@@ -1,8 +1,11 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-<h1>Wow. Such page. Very HTTP response</h1>
-This is some image.
-
+	<h1>Image Page</h1>
+	This page contains images.<br />
+	<ul>
+{% for name in names %}
+	<a href='/pics/{{ name }}'>{{ name }}<br>
+{% endfor %}
+	</ul>
+	<a href="/">Home</a>
 {% endblock %}

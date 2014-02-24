@@ -1,9 +1,5 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-Hello Mrs. {{ firstname }} {{ lastname }}.
-
+	<h1>Hello {{ firstname[0] }} {{ lastname[0] }}!</h1>
+	<a href="/">Home</a>
 {% endblock %}
-
-<!-- http://arctic.cse.msu.edu:9807/submit?firstname=Taylor&lastname=Jones&submit=Submit -->
