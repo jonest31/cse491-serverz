@@ -2,66 +2,11 @@
 import random
 import socket
 import time
-from urlparse import urlparse, parse_qs
+import urlparse
 import cgi
+
 from StringIO import StringIO
-import jinja2
-
-def handle_connection(conn):
-    # Start reading in data from the connection
-    req = conn.recv(1)
-    count = 0
-    while req[-4:] != '\r\n\r\n':
-        req += conn.recv(1)
-
-    # Parse the headers we've received
-    req, data = req.split('\r\n',1)
-    headers = {}
-    for line in data.split('\r\n')[:-2]:
-        k, v = line.split(': ', 1)
-        headers[k.lower()] = v
-
-    # Parse out the path and related info
-    path = urlparse(req.split(' ', 3)[1])
-
-    # The dict of pages we know how to get to
-    response = {
-                '/' : 'index.html', \
-                '/content' : 'content.html', \
-                '/file' : 'file.html', \
-                '/image' : 'image.html', \
-                '/form' : 'form.html', \
-                '/submit' : 'submit.html', \
-               }
-
-    # Basic connection information and set up templates
-    loader = jinja2.FileSystemLoader('./templates')
-    env = jinja2.Environment(loader=loader)
-    retval = 'HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n'
-    content = ''
-
-    # Check if the request is get or post, set up the args
-    args = parse_qs(path[4])
-    if req.startswith('POST '):
-        while len(content) < int(headers['content-length']):
-            content += conn.recv(1)
-    fs = cgi.FieldStorage(fp=StringIO(content), headers=headers, environ={'REQUEST_METHOD' : 'POST'})
-    args.update(dict([(x, [fs[x].value]) for x in fs.keys()]))
-
-    # Check if we got a path to an existing page
-    try:
-        template = env.get_template(response[path[2]])
-    except KeyError:
-        args['path'] = path[2]
-        retval = 'HTTP/1.0 404 Not Found\r\n\r\n'
-        template = env.get_template('404.html')
-
-    # Render the page
-    retval += template.render(args)
-    conn.send(retval)
-
-    # Done here
-    conn.close()
+from app import make_app
 
 def main():
     s = socket.socket() # Create a socket object
@@ -78,11 +23,68 @@ def main():
     while True:
         # Establish connection with client.
         c, (client_host, client_port) = s.accept()
-        print 'Got connection from', client_host, client_port
+        print 'Got connection from', client_host, client_port, '\n'
         handle_connection(c)
-        
-# boilerplate
-if __name__ == "__main__":
-    main()
 
+def handle_connection(conn):
+  environ = {}
+  request = conn.recv(1)
+  
+  # This will get all the headers
+  while request[-4:] != '\r\n\r\n':
+    request += conn.recv(1)
 
+  first_line_of_request_split = request.split('\r\n')[0].split(' ')
+
+  # Path is the second element in the first line of the request
+  # separated by whitespace. (Between GET and HTTP/1.1). GET/POST is first.
+  http_method = first_line_of_request_split[0]
+  environ['REQUEST_METHOD'] = first_line_of_request_split[0]
+
+  try:
+    parsed_url = urlparse.urlparse(first_line_of_request_split[1])
+    environ['PATH_INFO'] = parsed_url[2]
+  except:
+    pass
+
+  def start_response(status, response_headers):
+        conn.send('HTTP/1.0 ')
+        conn.send(status)
+        conn.send('\r\n')
+        for pair in response_headers:
+            key, header = pair
+            conn.send(key + ': ' + header + '\r\n')
+        conn.send('\r\n')
+
+  if environ['REQUEST_METHOD'] == 'POST':
+    environ = parse_post_request(conn, request, environ)
+  elif environ['REQUEST_METHOD'] == 'GET':
+    environ['QUERY_STRING'] = parsed_url.query
+  wsgi_app = make_app()
+  conn.send(wsgi_app(environ, start_response))
+  conn.close()
+
+def parse_post_request(conn, request, environ):
+  request_split = request.split('\r\n')
+
+  # Headers are separated from the content by '\r\n'
+  # which, after the split, is just ''.
+
+  # First line isn't a header, but everything else
+  # up to the empty line is. The names are separated
+  # from the values by ': '
+  for i in range(1,len(request_split) - 2):
+      header = request_split[i].split(': ', 1)
+      environ[header[0].upper()] = header[1]
+
+  content_length = int(environ['CONTENT-LENGTH'])
+  
+  content = ''
+  for i in range(0,content_length):
+      content += conn.recv(1)
+
+  environ['wsgi.input'] = StringIO(content)
+  return environ
+
+if __name__ == '__main__':
+   main()
