@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import server
+import sys
 
 def test_error():
     conn = FakeConnection("GET /404NotFound HTTP/1.0\r\n\r\n")
@@ -59,6 +60,18 @@ def test_Image():
     else:
         pass
 
+def test_images_thumb():
+    conn = FakeConnection("GET /images_thumb HTTP/1.0\r\n\r\n")
+    server.handle_connection(conn, 80)
+    result = conn.sent
+
+    if ('HTTP/1.0 200 OK' and \
+        'Content-type: text/html' and \
+        'Thumbnail Images Page') not in result:
+        assert False
+    else:
+        pass
+
 def test_form():
     conn = FakeConnection("GET /form HTTP/1.0\r\n\r\n")
     server.handle_connection(conn, 80)
@@ -76,12 +89,12 @@ def test_form():
         pass
 
 def test_submit():
-    conn = FakeConnection("GET /submit?firstname=Eunbong&lastname=Yang&submit=Submit HTTP/1.0\r\n\r\n")
+    conn = FakeConnection("GET /submit?firstname=Taylor&lastname=Jones&submit=Submit HTTP/1.0\r\n\r\n")
     server.handle_connection(conn, 80)
     result = conn.sent
 
     if ('HTTP/1.0 200 OK' and \
-        'Hello Eunbong Yang!') not in result:
+        'Hello Taylor Jones!') not in result:
         assert False
     else:
         pass
@@ -90,7 +103,7 @@ def test_post_app():
     conn = FakeConnection("POST /submit HTTP/1.0\r\n" + \
                           "Content-Length: 31\r\n" + \
                           "Content-Type: application/x-www-form-urlencoded\r\n\r\n" + \
-                          "firstname=Eunbong&lastname=Yang\r\n")
+                          "firstname=Taylor&lastname=Jones\r\n")
     server.handle_connection(conn, 80)
     result = conn.sent
 
@@ -106,11 +119,11 @@ def test_post_multi():
                           "--AaB03x\r\n" + \
                           "Content-Disposition: form-data; name=\"firstname\";" + \
                           " filename=\"firstname\"\r\n\r\n" + \
-                          "Eunbong\r\n" + \
+                          "Taylor\r\n" + \
                           "--AaB03x\r\n" + \
                           "Content-Disposition: form-data; name=\"lastname\";" + \
                           " filename=\"lastname\"\r\n\r\n" + \
-                          "Yang\r\n" + \
+                          "Jones\r\n" + \
                           "--AaB03x\r\n" + \
                           "Content-Disposition: form-data; name=\"key\";" + \
                           " filename=\"key\"\r\n\r\n" + \
@@ -126,6 +139,8 @@ def test_post_multi():
 
 def test_main():
     fakemodule = FakeSocketModule()
+    sys.argv[1] = '-A'
+    sys.argv.append('myapp')
 
     success = False
     try:

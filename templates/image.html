@@ -1,11 +1,15 @@
 {% extends "base.html" %}
-{% block content %}
-	<h1>Image Page</h1>
-	This page contains images.<br />
-	<ul>
+
+{% block title %} Web Server - Images Page {% endblock title %}
+
+{% block body %}
+
+<h1>Images Page</h1>
+
+<ul>
 {% for name in names %}
-	<a href='/pics/{{ name }}'>{{ name }}<br>
+  <a href='/pics/{{ name }}'>{{ name }}</a><br>
 {% endfor %}
-	</ul>
-	<a href="/">Home</a>
-{% endblock %}
+</ul>
+
+{% endblock body %}

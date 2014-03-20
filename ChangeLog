@@ -10,3 +10,10 @@
  * Branched test file and added test functions for each case
  * Divided code into functions and added features to functions
  * Handled POST and GET requests
+
+2014-03-19  Taylor Jones
+
+ * Removed render.py
+ * Fixed href tag in images.html
+ * Updated arguments in test_server.py main() function
+ * Project Option 5: Added images_thumb with thumbnails. Also added a URL that provides a list of images, resized to thumbnails (50x50).
