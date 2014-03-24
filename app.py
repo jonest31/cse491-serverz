@@ -36,6 +36,7 @@ class MyApp(object):
                    '/content' : self.content,
                    '/file' : self.File,
                    '/image' : self.Image,
+                   '/images_thumb' : self.images_thumb,
                    '/form' : self.form,
                    '/submit' : self.submit }
 
@@ -72,6 +73,11 @@ class MyApp(object):
         start_response('200 OK', [('Content-type', 'text/html')])
         params = dict(names=get_contents('images'))
         return render_page('image.html', params)
+
+    def images_thumb(self, environ, start_response):
+        start_response('200 OK', [('Content-type', 'text/html')])
+        params = dict(names=get_contents('images'))
+        return render_page('images_thumb.html', params)
 
     def form(self, environ, start_response):
         start_response('200 OK', [('Content-type', 'text/html')])
