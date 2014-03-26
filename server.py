@@ -2,6 +2,7 @@
 import argparse
 from app import make_app
 import imageapp
+import os
 import quixote
 from quixote.demo.altdemo import create_publisher
 import random
@@ -22,7 +23,7 @@ def handle_connection(conn, port):
     count = 0
     env = {}
     while request[-4:] != '\r\n\r\n':
-        request += conn.recv(1)
+         request += conn.recv(1)
 
     request, data = request.split('\r\n',1)
     headers = {}
@@ -45,7 +46,7 @@ def handle_connection(conn, port):
     env['wsgi.multiprocess'] = False
     env['wsgi.run_once'] = False
     env['wsgi.url_scheme'] = 'http'
-    #env['HTTP_COOKIE'] = headers['cookie']
+    env['HTTP_COOKIE'] = headers['cookie'] if 'cookie' in headers.keys() else ''
 
     body = ''
     if request.startswith('POST '):
@@ -73,7 +74,7 @@ def handle_connection(conn, port):
     conn.close()
 
 def get_args():
-    app_list = ['altdemo', 'image', 'myapp']
+    app_list = ['altdemo', 'image', 'myapp', 'quotes', 'chat']
     parser = argparse.ArgumentParser()
     parser.add_argument('-A', action="store",
                               dest='arg_app',
@@ -141,5 +142,12 @@ def main(socketmodule=None):
         print 'The Web server URL for this would be http://%s:%d/' % (host, port)
         httpd.serve_forever()
 
+    elif app in ('quotes', 'chat'):
+        if port == 0:
+            port = random.randint(8000, 9999)
+        os.chdir(app)
+        os.system("python2.7 %s-server %d" % (app, port))
+
 if __name__ == '__main__':
     main()
+
