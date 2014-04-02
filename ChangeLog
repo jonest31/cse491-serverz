@@ -17,3 +17,10 @@
  * Fixed href tag in images.html
  * Updated arguments in test_server.py main() function
  * Project Option 5: Added images_thumb with thumbnails. Also added a URL that provides a list of images, resized to thumbnails (50x50).
+ 
+ 2014-03-26  Taylor Jones
+
+ * Added quotes folder, edited the quotes displayed just for fun.
+ * Added chat messaging functionality.
+ * Updated server.py main() function to handle quote and chat functionality.
+ * Project Option 3: Added layout.css from oswd.org. Changed some colors and images to improve layout of image page.
