@@ -24,3 +24,8 @@
  * Added chat messaging functionality.
  * Updated server.py main() function to handle quote and chat functionality.
  * Project Option 3: Added layout.css from oswd.org. Changed some colors and images to improve layout of image page.
+
+ 2014-04-02  Taylor Jones
+
+ * Project Option 6: Added metadata uploading to imageapp. Name and desciption are stored in a dictionary with the image.
+ * Project Option 7: Added searching the image metadata. If an image is selected after being searched for, it is moved to the end of the images list.
