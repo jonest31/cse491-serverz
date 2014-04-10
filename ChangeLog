@@ -29,3 +29,12 @@
 
  * Project Option 6: Added metadata uploading to imageapp. Name and desciption are stored in a dictionary with the image.
  * Project Option 7: Added searching the image metadata. If an image is selected after being searched for, it is moved to the end of the images list.
+
+ 2014-04-09  Taylor Jones
+
+ * image.py: Was replaced with sqlite.py
+ * galley.html: Fixed formatting and title, added indices
+ * layout.css: Added the table elements for galley.html
+ * Updated Project Option 5: Migrated the thumbnail gallery to imageapp.
+ * Project Option 16: Added a SQLite database to store the images.
+ * Project Option 4: Imported guess_type from mimetypes and added jpeg and tiff images.
