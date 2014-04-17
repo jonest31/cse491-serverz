@@ -24,7 +24,7 @@ def render(template_name, values={}):
     template = env.get_template(template_name)
     return template.render(values)
 
-def get_image(img):
+def get_image_background(img):
     dirname = os.path.dirname(__file__)
     i_dir = os.path.join(dirname, image_dir)
     i_dir = os.path.abspath(i_dir)

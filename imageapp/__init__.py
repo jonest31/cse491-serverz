@@ -13,9 +13,18 @@ def create_publisher():
  
 def setup(): # stuff that should be run once.
     html.init_templates()
-
-    some_data = open('imageapp/dice.png', 'rb').read()
-    image.add_image(some_data)
+# some_data = open('images/dice.png', 'rb').read()
+# img = image.add_image_metadata(some_data, "dice.png", "A picture of dice")
+# image.add_image(img)
+    i1 = open('images/hermosa_pier.jpg', 'rb').read()
+    img1 = image.add_image_metadata(i1, "pier", "A picture of hermosa pier")
+    image.add_image(img1)
+    i2 = open('images/manhattan_pier.jpg', 'rb').read()
+    img2 = image.add_image_metadata(i2, "pier2", "A picture of manhattan pier")
+    image.add_image(img2)
+    i3 = open('images/tulips.jpg', 'rb').read()
+    img3 = image.add_image_metadata(i3, "tulips", "A field of tulips")
+    image.add_image(img3)
 
 def teardown(): # stuff that should be run once.
     pass
