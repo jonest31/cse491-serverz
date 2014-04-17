@@ -38,3 +38,17 @@
  * Updated Project Option 5: Migrated the thumbnail gallery to imageapp.
  * Project Option 16: Added a SQLite database to store the images.
  * Project Option 4: Imported guess_type from mimetypes and added jpeg and tiff images.
+ 
+ 2014-04-16  Taylor Jones
+
+ * I did the rest of my projects! With these and my blog posts, I'm done!
+   Full list:
+	* Project Option 5: Thumbnail gallery
+	* Project Option 3: CSS Template
+	* Project Option 6: Metadata uploading, storage, and retrieval
+	* Project Option 7: Meatdata searching
+	* Project Option 16: SQLite database
+	* Project Option 4: Support for JPEG and TIFF images
+	* Project Option 8: Image comments
+	* Project Option 9: Image tracking via login and cookies
+	* Project Option 15: Account creation, login, and authentication
